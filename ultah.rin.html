@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Selamat Ulang Tahun Rin Sayang 💙</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg1: #6ec6ff;
+            --bg2: #cfefff;
+            --text: #033e6b;
+            --heartColor: #4da6ff;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(180deg, var(--bg1), var(--bg2));
+            color: var(--text);
+        }
+
+        /* PAGE 1 */
+        .page {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            width: min(760px, 92%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 16px;
+        }
+
+        .photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px rgba(30, 49, 80, 0.12);
+            background: #fff;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            text-align: center;
+            color: var(--text);
+            line-height: 1.05;
+        }
+
+        .lead {
+            margin: 0;
+            text-align: center;
+            max-width: 720px;
+            line-height: 1.5;
+            font-size: 16px;
+            color: var(--text);
+        }
+
+        .controls {
+            display: flex;
+            gap: 14px;
+            margin-top: 6px;
+        }
+
+        .btn {
+            background: #fff;
+            color: #0e66d1;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 26px;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(14, 102, 209, 0.14);
+            cursor: pointer;
+        }
+
+        /* subtle floating hearts background */
+        .bg-heart {
+            position: fixed;
+            bottom: -40px;
+            font-size: 18px;
+            color: rgba(77, 166, 255, 0.9);
+            animation: floatUp 6s linear forwards;
+            pointer-events: none;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 0.9
+            }
+
+            100% {
+                transform: translateY(-110vh) scale(1.2);
+                opacity: 0
+            }
+        }
+
+        /* GAME PAGE */
+        #gamePage {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            padding: 26px 12px;
+            box-sizing: border-box;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .game-title {
+            margin-top: 18px;
+            font-size: 18px;
+            text-align: center;
+            color: var(--text);
+            line-height: 1.3;
+            max-width: 900px;
+        }
+
+        .hint {
+            margin-top: 12px;
+            font-size: 16px;
+            color: var(--text);
+            opacity: 0.95;
+            text-align: center;
+        }
+
+        /* SVG heart wrapper (we'll position it absolutely) */
+        #heartEl {
+            position: absolute;
+            left: 50%;
+            top: 40%;
+            transform: translate(-50%, -50%) scale(1);
+            transform-origin: center;
+            width: 140px;
+            /* visual size (JS will scale via transform) */
+            height: 140px;
+            cursor: pointer;
+            transition: transform 180ms ease, left 260ms ease, top 260ms ease, filter 180ms ease;
+            z-index: 10;
+            touch-action: manipulation;
+        }
+
+        /* explosion animation */
+        @keyframes explode {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+                filter: blur(0px) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(3) rotate(720deg);
+                opacity: 0;
+                filter: blur(6px);
+            }
+        }
+
+        .result {
+            display: none;
+            margin-top: 18px;
+            font-size: 20px;
+            color: var(--text);
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* responsive */
+        @media (max-width:420px) {
+            #heartEl {
+                width: 110px;
+                height: 110px;
+            }
+
+            .photo {
+                width: 120px;
+                height: 120px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+        }
+
+        /* CAT GAME PAGE */
+        #catGamePage {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            padding: 26px 12px;
+            box-sizing: border-box;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        #catGame {
+            width: 300px;
+            height: 300px;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .cat-position {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            overflow: hidden;
+        }
+
+        /* Atur posisi kucing */
+        #cat-pos-1 {
+            top: 0;
+            left: 0;
+        }
+
+        #cat-pos-2 {
+            top: 0;
+            right: 0;
+        }
+
+        #cat-pos-3 {
+            bottom: 0;
+            left: 0;
+        }
+
+        #cat-pos-4 {
+            bottom: 0;
+            right: 0;
+        }
+
+        .cat {
+            width: 100%;
+            height: 100%;
+            background-image: url('cat.png');
+            /* Ganti dengan gambar kucing kamu */
+            background-size: cover;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            display: block;
+        }
+
+        .cat:active {
+            transform: scale(0.9);
+        }
+
+        /* ROMANTIC PAGE */
+        #romanticPage {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            padding: 26px 12px;
+            box-sizing: border-box;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- PAGE 1 -->
+    <section id="page1" class="page">
+        <div class="card">
+            <img src="rin.jpg" alt="Rin" class="photo" id="photo">
+            <h1>Selamat Ulang Tahun, Rin Sayang 💙</h1>
+            <p class="lead">Aku gak bisa kasih hadiah besar, tapi aku kasih rasa sayang yang gak akan pudar. Semoga kamu selalu bahagia ya sayang🌸</p>
+            <div class="controls">
+                <button class="btn" id="nextBtnAwal">Lanjut 💞</button>
+                <button class="btn" id="musicBtn">🎵 Putar Musik</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAGE 2 (GAME) -->
+    <section id="gamePage">
+        <h2 class="game-title">💙 Coba pencet hati ini pelan-pelan ya, Rin...<br>setiap klik bikin cintaku makin besar buat kamu 💕</h2>
+        <div class="hint" id="hint">Tekan hatinya terus sampai meledak — tantangannya 20 klik! ✨</div>
+        <!-- SVG heart (reliable shape on all devices) -->
+        <svg id="heartEl" viewBox="0 0 512 512" aria-hidden="true">
+            <path id="heartPath" fill="#4da6ff"
+                d="M471.7 73.9c-54.5-46.4-136-38.6-186.4 13.7L256 116.9l-29.3-29.3C176.3 35.3 94.9 27.6 40.3 74c-62.6 53.3-66.8 149.4-9.9 210.5l193.5 199.6c12 12.4 31.4 12.4 43.4 0L481.6 284.4c56.9-61.1 52.7-157.2-9.9-210.5z" />
+        </svg>
+        <div class="result" id="resultMsg">💥 Cintaku udah meledak karena besarnya untukmu 💖</div>
+        <button class="btn" id="nextBtn" style="display:none;">Selanjutnya</button>
+    </section>
+
+    <!-- CAT GAME PAGE -->
+    <section id="catGamePage" style="display:none;">
+        <h2>Game Tepuk Kucing</h2>
+        <div id="catGame">
+            <div class="cat-position" id="cat-pos-1"></div>
+            <div class="cat-position" id="cat-pos-2"></div>
+            <div class="cat-position" id="cat-pos-3"></div>
+            <div class="cat-position" id="cat-pos-4"></div>
+        </div>
+        <p>Skor: <span id="score">0</span></p>
+        <button class="btn" id="backToGameBtn" style="display:none;">Kembali ke Game Hati</button>
+    </section>
+
+    <!-- ROMANTIC PAGE -->
+    <section id="romanticPage" style="display:none;">
+        <h2>Untuk Rin Sayangku 💖</h2>
+        <p>Aku sangat bersyukur telah memilikimu di hidupku. Kamu adalah alasan kebahagiaanku, dan aku akan selalu mencintaimu selamanya. Semoga kamu selalu bahagia ya, Sayang 🌸</p>
+        <button class="btn" id="backToHomeBtn">Kembali ke Awal</button>
+    </section>
+
+    <!-- AUDIO FILES (pastikan nama file persis sama) -->
+    <audio id="bgMusic" src="Backsound Musik Romantis - No Copyright_1760873817423.m4a" loop></audio>
+    <audio id="clickSnd" src="PSX -  Press Button Sound Effects (Download Sound)_1760876550989.m4a"></audio>
+    <audio id="boomSnd" src="Boom Sound Effect_1760876612288.m4a"></audio>
+    <audio id="catSnd" src="cat.m4a"></audio>
+    <!-- Ganti dengan nama file suara kucing kamu -->
+    <script>
+        // elements
+        const page1 = document.getElementById('page1');
+        const gamePage = document.getElementById('gamePage');
+        const catGamePage = document.getElementById('catGamePage');
+        const romanticPage = document.getElementById('romanticPage');
+        const nextBtnAwal = document.getElementById('nextBtnAwal');
+        const nextBtn = document.getElementById('nextBtn');
+        const musicBtn = document.getElementById('musicBtn');
+        const bgMusic = document.getElementById('bgMusic');
+        const clickSnd = document.getElementById('clickSnd');
+        const boomSnd = document.getElementById('boomSnd');
+        const heartEl = document.getElementById('heartEl');
+        const resultMsg = document.getElementById('resultMsg');
+        const hint = document.getElementById('hint');
+        let clicks = 0;
+        let score = 0;
+        let baseScale = 1;
+        let exploded = false;
+        // limit floating hearts
+        const MAX_BG_HEARTS = 5;
+        let bgHeartCount = 0;
+
+        function spawnBgHeart() {
+            if (bgHeartCount >= MAX_BG_HEARTS) return;
+            bgHeartCount++;
+            const d = document.createElement('div');
+            d.className = 'bg-heart';
+            d.innerText = '💙';
+            d.style.left = (10 + Math.random() * 80) + 'vw';
+            d.style.fontSize = (14 + Math.random() * 12) + 'px';
+            d.style.animationDuration = (5 + Math.random() * 4) + 's';
+            document.body.appendChild(d);
+            setTimeout(() => {
+                d.remove();
+                bgHeartCount--;
+            }, 6500);
+        }
+        setInterval(() => {
+            if (page1.style.display !== 'none') spawnBgHeart();
+        }, 1200);
+        // play music handler
+        musicBtn.addEventListener('click', () => {
+            bgMusic.play().catch((error) => {
+                console.error("Gagal memutar musik:", error);
+                alert("Maaf, musik gagal diputar. Coba lagi nanti ya!");
+            });
+            musicBtn.textContent = '🎶 Musik Diputar';
+        });
+        // go to game
+        nextBtnAwal.addEventListener('click', () => {
+            page1.style.display = 'none';
+            gamePage.style.display = 'flex';
+            catGamePage.style.display = 'none';
+            romanticPage.style.display = 'none';
+            // center heart initial
+            resetHeartPosition();
+        });
+        // helper: random position within viewport (leaving margins)
+        function randomPosForHeart(widthPx, heightPx) {
+            const margin = 30;
+            const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+            const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+            const maxX = Math.max(margin, vw - margin - widthPx);
+            const maxY = Math.max(margin, vh - margin - heightPx);
+            const left = margin + Math.random() * (maxX - margin);
+            const top = margin + Math.random() * (maxY - margin);
+            return {
+                left,
+                top
+            };
+        }
+
+        function handleClickHeart() {
+            if (exploded) return;
+            clicks++;
+            try {
+                clickSnd.currentTime = 0;
+                clickSnd.play();
+            } catch (e) {}
+            baseScale = 1 + clicks * 0.05;
+            heartEl.style.transform = `translate(-50%,-50%) scale(${baseScale})`;
+            heartEl.style.filter = 'blur(1.2px)';
+            // compute random pos and apply px values
+            const visualSize = Math.max(80, Math.min(240, 140 * baseScale));
+            const pos = randomPosForHeart(visualSize, visualSize);
+            heartEl.style.left = pos.left + 'px';
+            heartEl.style.top = pos.top + 'px';
+            setTimeout(() => heartEl.style.filter = 'blur(0px)', 220);
+            if (clicks === 5) hint.textContent = "Wah, makin besar nih! Terus klik sampai 20 ya 💫";
+            if (clicks === 12) hint.textContent = "Udah deket! Cuma tinggal beberapa klik lagi 😉";
+            if (clicks >= 20) {
+                explodeHeart();
+            }
+        }
+
+        function explodeHeart() {
+            exploded = true;
+            try {
+                boomSnd.currentTime = 0;
+                boomSnd.play();
+            } catch (e) {}
+            heartEl.style.animation = 'explode 900ms ease forwards';
+            setTimeout(() => {
+                heartEl.style.display = 'none';
+                resultMsg.style.display = 'block';
+                hint.style.display = 'none';
+                nextBtn.style.display = 'inline-block'; // Tampilkan tombol "Selanjutnya"
+            }, 920);
+        }
+
+        function resetHeartPosition() {
+            heartEl.style.left = '50%';
+            heartEl.style.top = '40%';
+            baseScale = 1;
+            heartEl.style.transform = `translate(-50%,-50%) scale(${baseScale})`;
+        }
+        // when heart clicked: play click, scale up, blur briefly, move to new pos
+        heartEl.addEventListener('click', handleClickHeart);
+
+        // Cat Game
+        const catPositions = document.querySelectorAll('.cat-position');
+        const scoreDisplay = document.getElementById('score');
+        let currentCat = null;
+        const catSnd = document.getElementById('catSnd'); // Tambahkan ini
+
+        function showCat() {
+            // Pilih posisi acak
+            const randomPosition = catPositions[Math.floor(Math.random() * catPositions.length)];
+
+            // Pastikan posisi tersebut kosong
+            if (randomPosition.innerHTML === '') {
+                // Buat elemen kucing
+                const cat = document.createElement('div');
+                cat.classList.add('cat');
+
+                // Tambahkan event listener untuk kucing
+                cat.addEventListener('click', hitCat);
+
+                // Tampilkan kucing di posisi acak
+                randomPosition.appendChild(cat);
+                currentCat = randomPosition;
+            }
+        }
+
+        function hitCat() {
+            score++;
+            scoreDisplay.textContent = score;
+            try {
+                catSnd.currentTime = 0; // Reset posisi putar ke awal
+                catSnd.play(); // Putar suara kucing
+            } catch (e) {}
+            this.removeEventListener('click', hitCat);
+            this.parentNode.innerHTML = ''; // Hilangkan kucing setelah dipukul
+            currentCat = null;
+
+            if (score >= 15) {
+                const backToGameBtn = document.getElementById('backToGameBtn');
+                backToGameBtn.style.display = 'inline-block'; // Tampilkan tombol
+                backToGameBtn.textContent = 'Selanjutnya'; // Ubah teks tombol
+
+                // Hapus event listener yang lama
+                backToGameBtn.removeEventListener('click', backToHeartGame);
+
+                // Tambahkan event listener baru untuk pindah ke halaman romantis
+                backToGameBtn.addEventListener('click', goToRomanticPage);
+            }
+        }
+
+        function goToRomanticPage() {
+            catGamePage.style.display = 'none';
+            romanticPage.style.display = 'flex';
+        }
+
+        function backToHeartGame() {
+            catGamePage.style.display = 'none';
+            gamePage.style.display = 'flex';
+        }
+
+        function backToHome() {
+            romanticPage.style.display = 'none';
+            page1.style.display = 'flex';
+            // Reset skor dan tampilan game kucing jika perlu
+            score = 0;
+            scoreDisplay.textContent = score;
+
+            // Sembunyikan kembali tombol "Selanjutnya"
+            const backToGameBtn = document.getElementById('backToGameBtn');
+            backToGameBtn.style.display = 'none';
+            backToGameBtn.textContent = 'Kembali ke Game Hati'; // Kembalikan teks tombol
+
+            // Hapus event listener yang baru
+            backToGameBtn.removeEventListener('click', goToRomanticPage);
+
+            // Tambahkan event listener yang lama
+            backToGameBtn.addEventListener('click', backToHeartGame);
+        }
+
+        // Mulai game
+        setInterval(showCat, 2000); // Kucing muncul setiap 2 detik
+
+        // Cat Game Button
+        nextBtn.addEventListener('click', () => {
+            gamePage.style.display = 'none';
+            catGamePage.style.display = 'flex';
+        });
+
+        const backToHomeBtn = document.getElementById('backToHomeBtn');
+        backToHomeBtn.addEventListener('click', backToHome);
+
+        // init on load
+        window.addEventListener('load', () => {
+            page1.style.display = 'flex';
+            gamePage.style.display = 'none';
+            catGamePage.style.display = 'none';
+            romanticPage.style.display = 'none';
+            resetHeartPosition();
+
+            const backToGameBtn = document.getElementById('backToGameBtn'); //inisialisasi
+            backToGameBtn.addEventListener('click', backToHeartGame); //gunakan event listener lama
+        });
+        // keep heart visible when resizing
+        window.addEventListener('resize', () => {
+            const rect = heartEl.getBoundingClientRect();
+            const vw = document.documentElement.clientWidth;
+            const vh = document.documentElement.clientHeight;
+            let changed = false;
+            if (rect.left < 8) {
+                heartEl.style.left = '8px';
+                changed = true;
+            }
+            if (rect.top < 8) {
+                heartEl.style.top = '8px';
+                changed = true;
+            }
+            if (rect.right > vw - 8) {
+                heartEl.style.left = (vw - rect.width - 8) + 'px';
+                changed = true;
+            }
+            if (rect.bottom > vh - 8) {
+                heartEl.style.top = (vh - rect.height - 8) + 'px';
+                changed = true;
+            }
+            if (changed) {
+                heartEl.style.transform = `translate(-50%,-50%) scale(${baseScale})`;
+            }
+        });
+    </script>
+</body>
+
+</html>
